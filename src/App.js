@@ -2,6 +2,17 @@ import React, { useEffect } from 'react';
 import './App.css';
 
 import { useForm, ErrorMessage } from 'react-hook-form';
+import InputMask from 'react-input-mask';
+
+const nomeInput = {
+  required: { value: true, message: 'Campo Obrigatório' }
+};
+
+const numberInput = {
+  required: { value: true, message: 'Campo Obrigatório' },
+  maxLength: { value: 10, message: 'Campo max 10 digitos' },
+  pattern: { value: /^[0-9]/i, message: 'Somente números' }
+};
 
 function App() {
   const { register, handleSubmit, reset, errors } = useForm();
@@ -13,16 +24,6 @@ function App() {
   useEffect(() => {
     console.log(errors);
   }, [errors]);
-
-  const nomeInput = {
-    required: { value: true, message: 'Campo Obrigatório' }
-  };
-
-  const numberInput = {
-    required: { value: true, message: 'Campo Obrigatório' },
-    maxLength: { value: 2, message: 'Campo max 2 digitos' },
-    pattern: { value: /^[0-9]/i, message: 'Somente números' }
-  };
 
   return (
     <div className="content">
@@ -55,7 +56,9 @@ function App() {
 
         <div className="form-group">
           <label htmlFor="valor">Valor do produto: </label>
-          <input type="number" name="valor" id="valor" ref={register} />
+          <InputMask mask="999,999">
+            <input type="text" name="valor" id="valor" ref={register} />
+          </InputMask>
         </div>
 
         <button type="submit">Enviar</button>
