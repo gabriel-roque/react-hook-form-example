@@ -1,21 +1,18 @@
 import React, { useEffect } from 'react';
+
 import './App.css';
 
-import { useForm, ErrorMessage } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import { nomeInput, numberInput, requiredInput } from './validates';
+
 import InputMask from 'react-input-mask';
+import NumberFormat from 'react-number-format';
 
-const nomeInput = {
-  required: { value: true, message: 'Campo Obrigatório' }
-};
-
-const numberInput = {
-  required: { value: true, message: 'Campo Obrigatório' },
-  maxLength: { value: 10, message: 'Campo max 10 digitos' },
-  pattern: { value: /^[0-9]/i, message: 'Somente números' }
-};
+import Error from './Error';
 
 function App() {
-  const { register, handleSubmit, reset, errors } = useForm();
+  const { register, handleSubmit, reset, errors, control } = useForm();
+
   const onSubmit = data => {
     console.log(data);
     reset();
@@ -26,42 +23,58 @@ function App() {
   }, [errors]);
 
   return (
-    <div className="content">
+    <div className='content'>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label htmlFor="produto">Nome do Produto: </label>
+        <div className='form-group'>
+          <label htmlFor='produto'>Nome do Produto: </label>
           <input
-            type="text"
-            name="produto"
-            id="produto"
+            type='text'
+            name='produto'
+            id='produto'
             ref={register({ ...nomeInput })}
           />
-          <ErrorMessage errors={errors} name="produto">
-            {({ message }) => <p>{message}</p>}
-          </ErrorMessage>
+          <Error errors={errors} name='produto' />
         </div>
 
-        <div className="form-group">
+        <div className='form-group'>
           <label>Quantidade: </label>
           <input
-            type="number"
-            name="quantidade"
+            type='number'
+            name='quantidade'
             ref={register({ ...numberInput })}
           />
-          {/* {errors.quantidade && <span> Campo obrigatório</span>} */}
-          <ErrorMessage errors={errors} name="quantidade">
-            {({ message }) => <p>{message}</p>}
-          </ErrorMessage>
+          <Error errors={errors} name='quantidade' />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="valor">Valor do produto: </label>
-          <InputMask mask="999,999">
-            <input type="text" name="valor" id="valor" ref={register} />
+        <div className='form-group'>
+          <label htmlFor='cpf'>CPF: </label>
+
+          {/* Use lib 'react-input-mask' when using 'react-hook-form' 
+          for STATIC MASKS */}
+
+          <InputMask mask='999.999.999-99'>
+            <input type='text' name='cpf' id='cpf' ref={register} />
           </InputMask>
+          <Error errors={errors} name='cpf' />
         </div>
 
-        <button type="submit">Enviar</button>
+        <div className='form-group'>
+          <label htmlFor='valor'>Valor do produto: </label>
+
+          {/* Use lib 'react-number-format' when using 'react-hook-form' 
+          for DYNAMIC INPUTS (Ex: monetary input)*/}
+
+          <Controller
+            name='valor'
+            control={control}
+            rules={{ ...requiredInput }}
+            as={<NumberFormat thousandSeparator={true} prefix={'R$ '} />}
+          />
+          <Error errors={errors} name='valor' />
+        </div>
+        <div className='form-group'>
+          <button type='submit'>Submit</button>
+        </div>
       </form>
     </div>
   );
